@@ -20,7 +20,7 @@ function bottomNav(){return `<nav class="bottom-nav">${[['home','⌂','Home'],['
 function progress(v,max){const p=Math.min(max?Math.round(v/max*100):0,100);return `<div class="progress-track"><span style="width:${p}%"></span></div>`}
 function statCard(i,v,l){return `<div class="stat-card"><span>${i}</span><strong>${v}</strong><small>${l}</small></div>`}
 function miniCalendar(){const m=A.data.today.slice(0,7),md=A.data.month;const ws=new Set(md.workouts.map(x=>x.date)),rs=new Set(md.restDays.map(x=>x.date));const cells=[];const off=mondayIndex(`${m}-01`);for(let i=0;i<off;i++)cells.push('<span></span>');for(let d=1;d<=daysInMonth(m);d++){const k=keyFor(m,d);cells.push(`<button class="day-dot ${ws.has(k)?'done':''} ${rs.has(k)?'rest':''} ${k===A.data.today?'today':''}" data-action="date" data-date="${k}">${d}</button>`)}return `<div class="week-labels">${weekDays.map(x=>`<span>${x}</span>`).join('')}</div><div class="mini-calendar">${cells.join('')}</div>`}
-function home(){const t=A.data.today,s=A.data.stats,done=A.data.month.workouts.some(x=>x.date===t);return `<div class="page home-page"><section class="hero-card"><div><p class="eyebrow">YOUR MOMENTUM</p><div class="streak-value">🔥 ${s.currentStreak}<span>day streak</span></div><p class="muted">🏆 Best: ${s.longestStreak} days</p></div><div class="ring" style="--progress:${s.consistency}%"><div><strong>${s.consistency}%</strong><span>consistency</span></div></div></section><section class="today-card"><div class="today-copy"><p class="eyebrow">TODAY</p><h2>${readable(t)}</h2><p class="muted">${s.currentStreak?'Protect your momentum.':'Your first workout starts your streak.'}</p></div><button class="workout-cta ${done?'complete':''}" ${(done||A.busyWorkout)?'disabled':''} data-action="quick-workout">${done?'✓ WORKOUT COMPLETE':A.busyWorkout?'SAVING…':'💪 I WORKED OUT'}</button></section><section class="progress-card"><div class="section-head"><div><p class="eyebrow">MONTHLY PROGRESS</p><h3>${s.workoutsMonth} / ${s.monthlyGoal} workouts</h3></div><button class="text-btn" data-action="nav" data-page="calendar">View calendar →</button></div>${progress(s.workoutsMonth,s.monthlyGoal)}</section><section class="calendar-card"><div class="section-head"><div><p class="eyebrow">${fmtMonth(A.data.today.slice(0,7)).toUpperCase()}</p><h3>Your month</h3></div><button class="mini-circle" data-action="nav" data-page="calendar">↗</button></div>${miniCalendar()}</section><section class="stat-grid">${statCard('💪',s.totalWorkouts,'Total workouts')}${statCard('📅',s.workoutsWeek,'This week')}${statCard('🔥',s.currentStreak,'Current streak')}${statCard('🏆',s.longestStreak,'Best streak')}</section></div>`}
+function home(){const t=A.data.today,s=A.data.stats,done=A.data.month.workouts.some(x=>x.date===t)||A.pendingToday;return `<div class="page home-page"><section class="hero-card"><div><p class="eyebrow">YOUR MOMENTUM</p><div class="streak-value">🔥 ${s.currentStreak}<span>day streak</span></div><p class="muted">🏆 Best: ${s.longestStreak} days</p></div><div class="ring" style="--progress:${s.consistency}%"><div><strong>${s.consistency}%</strong><span>consistency</span></div></div></section><section class="today-card"><div class="today-copy"><p class="eyebrow">TODAY</p><h2>${readable(t)}</h2><p class="muted">${s.currentStreak?'Protect your momentum.':'Your first workout starts your streak.'}</p></div><button class="workout-cta ${done?'complete':''}" ${(done||A.busyWorkout)?'disabled':''} data-action="quick-workout">${done?'✓ WORKOUT COMPLETE':A.busyWorkout?'SAVING…':'💪 I WORKED OUT'}</button></section><section class="progress-card"><div class="section-head"><div><p class="eyebrow">MONTHLY PROGRESS</p><h3>${s.workoutsMonth} / ${s.monthlyGoal} workouts</h3></div><button class="text-btn" data-action="nav" data-page="calendar">View calendar →</button></div>${progress(s.workoutsMonth,s.monthlyGoal)}</section><section class="calendar-card"><div class="section-head"><div><p class="eyebrow">${fmtMonth(A.data.today.slice(0,7)).toUpperCase()}</p><h3>Your month</h3></div><button class="mini-circle" data-action="nav" data-page="calendar">↗</button></div>${miniCalendar()}</section><section class="stat-grid">${statCard('💪',s.totalWorkouts,'Total workouts')}${statCard('📅',s.workoutsWeek,'This week')}${statCard('🔥',s.currentStreak,'Current streak')}${statCard('🏆',s.longestStreak,'Best streak')}</section></div>`}
 function calendar(){const m=A.month||A.data.today.slice(0,7),days=daysInMonth(m);let md=A.data.month;if(m!==A.data.today.slice(0,7)){md=A.monthCache?.[m]||{workouts:[],restDays:[]}}const ws=new Set(md.workouts.map(x=>x.date)),rs=new Set(md.restDays.map(x=>x.date));const off=mondayIndex(`${m}-01`),cells=[];for(let i=0;i<off;i++)cells.push('<div></div>');for(let d=1;d<=days;d++){const k=keyFor(m,d),future=k>A.data.today;cells.push(`<button class="calendar-day ${ws.has(k)?'done':''} ${rs.has(k)?'rest':''} ${k===A.data.today?'today':''} ${future?'future':''}" ${future?'disabled':''} data-action="date" data-date="${k}"><span>${d}</span>${ws.has(k)?'<i>✓</i>':''}${rs.has(k)?'<em>REST</em>':''}</button>`)}return `<div class="page"><div class="page-heading"><div><p class="eyebrow">HISTORY</p><h1>Calendar</h1></div><div class="month-nav"><button data-action="month" data-delta="-1">‹</button><span>${fmtMonth(m)}</span><button data-action="month" data-delta="1" ${m>=A.data.today.slice(0,7)?'disabled':''}>›</button></div></div><section class="calendar-full"><div class="week-labels">${weekDays.map(x=>`<span>${x}</span>`).join('')}</div><div class="full-grid">${cells.join('')}</div><div class="legend"><span><i class="legend-box done"></i>Workout</span><span><i class="legend-box rest"></i>Rest day</span><span><i class="legend-box"></i>Not logged</span><span><i class="today-star">★</i>Today</span></div></section><p class="muted calendar-note">Tap any past or current date to edit it. Future days stay locked.</p></div>`}
 function stats(){const d=A.data,s=d.stats,max=Math.max(...d.monthlyCounts.map(x=>x.count),1),wm=Math.max(...d.weeklyCounts.map(x=>x.count),1),tt=d.typeDistribution.reduce((a,b)=>a+b.count,0)||1;const bars=d.monthlyCounts.map(x=>`<div class="bar-col"><div class="bar-value">${x.count||''}</div><div class="bar" style="height:${Math.max(x.count/max*100,4)}%"></div><small>${x.month.slice(5)}</small></div>`).join('');const weeks=d.weeklyCounts.map(x=>`<div class="week-row"><span>${x.week.slice(5)}</span><div class="mini-progress"><i style="width:${x.count/wm*100}%"></i></div><strong>${x.count}</strong></div>`).join('');const types=(d.typeDistribution.length?d.typeDistribution:[{type:'Other',count:0}]).map(x=>`<div class="type-row"><span>${esc(x.type)}</span><div class="mini-progress"><i style="width:${x.count/tt*100}%"></i></div><strong>${x.count}</strong></div>`).join('');const heat=Array.from({length:52},(_,i)=>`<div class="heat-col">${d.heatmap.slice(i*7,i*7+7).map(x=>`<span class="${x.completed?'active':''}" title="${x.date}"></span>`).join('')}</div>`).join('');const ach=d.achievements.map(a=>`<div class="achievement-card ${a.unlocked?'unlocked':'locked'}"><div class="achievement-icon">${a.unlocked?a.icon:'◈'}</div><div><strong>${esc(a.title)}</strong><p>${esc(a.desc)}</p>${a.unlocked?'<small>Unlocked</small>':''}</div></div>`).join('');return `<div class="page"><div class="page-heading"><div><p class="eyebrow">YOUR NUMBERS</p><h1>Stats</h1></div></div><div class="stats-hero"><div><div class="stats-big">🔥 ${s.currentStreak}</div><span>current streak</span></div><div><div class="stats-big">🏆 ${s.longestStreak}</div><span>longest streak</span></div></div><div class="stat-grid six">${statCard('💪',s.totalWorkouts,'Total workouts')}${statCard('📅',s.workoutsMonth,'This month')}${statCard('📊',s.workoutsWeek,'This week')}${statCard('📈',s.consistency+'%','Consistency')}</div><section class="chart-card"><p class="eyebrow">MONTHLY PROGRESS</p><h3>Workouts per month</h3><div class="bar-chart">${bars}</div></section><section class="chart-card"><p class="eyebrow">WEEKLY CONSISTENCY</p><h3>Last 8 weeks</h3><div class="weekly-list">${weeks}</div></section><section class="chart-card"><p class="eyebrow">WORKOUT TYPES</p><h3>What you train</h3><div class="type-list">${types}</div></section><section class="chart-card"><p class="eyebrow">LAST 365 DAYS</p><h3>Workout heatmap</h3><div class="heatmap">${heat}</div></section><section class="achievements-section"><p class="eyebrow">MILESTONES</p><h3>Achievements</h3><div class="achievement-grid">${ach}</div></section></div>`}
 function settings(){const s=A.data.settings,sc=A.data.schedule;return `<div class="page"><div class="page-heading"><div><p class="eyebrow">PERSONALIZE</p><h1>Settings</h1></div></div><section class="settings-card"><h3>Profile</h3><label>Name<input id="set-name" class="text-input" value="${esc(s.name)}" placeholder="Your name"></label></section><section class="settings-card"><h3>Goals</h3><div class="setting-row"><div><strong>Weekly workout goal</strong><small>How many days you want to train</small></div><select id="set-weekly">${[1,2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===s.weeklyGoal?'selected':''}>${n}</option>`).join('')}</select></div><div class="setting-row"><div><strong>Monthly workout goal</strong><small>Target for the current month</small></div><input id="set-monthly" type="number" min="1" max="31" value="${s.monthlyGoal}"></div></section><section class="settings-card"><h3>Workout schedule</h3><p class="muted">Scheduled rest days do not break your streak.</p><div class="schedule-grid">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d,i)=>`<button class="${sc[i]?'on':''}" data-action="schedule" data-index="${i}"><span>${d}</span>${sc[i]?'Workout':'Rest'}</button>`).join('')}</div><button class="secondary-btn" data-action="save-schedule">Save schedule</button></section><section class="settings-card"><h3>Week starts</h3><div class="setting-row"><div><strong>Start day of week</strong><small>Used for weekly goals and stats</small></div><select id="set-weekstart">${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].map((d,i)=>`<option value="${i}" ${i===s.weekStartDay?'selected':''}>${d}</option>`).join('')}</select></div></section><section class="settings-card"><h3>Reminders</h3><div class="setting-row"><div><strong>Workout reminders</strong><small>Only remind when today isn't logged</small></div><button class="toggle ${s.reminderEnabled?'on':''}" data-action="reminder-toggle"><span></span></button></div><div class="setting-row"><div><strong>Reminder time</strong><small>Local time</small></div><input id="set-time" type="time" value="${s.reminderTime}" ${s.reminderEnabled?'':'disabled'}></div></section><section class="settings-card"><h3>Appearance</h3><div class="segmented"><button class="${s.theme==='dark'?'active':''}" data-action="theme" data-theme="dark">Dark</button><button class="${s.theme==='light'?'active':''}" data-action="theme" data-theme="light">Light</button></div></section><section class="settings-card"><h3>Data</h3><button class="secondary-btn full" data-action="export">Export data</button><button class="danger-btn full" data-action="reset">Reset all data</button></section><section class="settings-card"><h3>Privacy</h3><p class="muted">Your TrainStreak data is stored securely in the TrainStreak cloud database. No account is required.</p></section><section class="settings-card about"><h3>About TrainStreak</h3><p>Simple workout consistency tracking for people who care about showing up.</p><small>Version 1.0 • Don’t break the streak.</small></section><button class="primary-btn wide save-all" data-action="save-settings">Save settings</button></div>`}
@@ -31,26 +31,23 @@ function achievementModal(a){return `<div class="modal-backdrop"><div class="cel
 function modal(){if(A.modal?.type==='success')return successModal(A.modal.streak,A.modal.message);if(A.modal?.type==='achievement')return achievementModal(A.modal.achievement);return dateModal()}
 async function doWorkout(date=todayKey(),type=null,note=''){
   if(A.busyWorkout)return;
-  A.busyWorkout=true;
-  const isToday = date===A.data.today;
-  const monthKey = date.slice(0,7);
-  const currentMonth = A.data.today.slice(0,7);
-  const optimisticBefore = {
-    stats: {...A.data.stats},
-    workout: A.data.month.workouts.find(x=>x.date===date) || null
-  };
+  const isToday=date===A.data.today;
+  if(isToday && (A.pendingToday || A.data.month.workouts.some(x=>x.date===date))) return;
 
-  // Optimistic UI for the common one-tap flow: the app responds immediately
-  // while PostgreSQL finishes in the background.
+  A.busyWorkout=true;
+  A.pendingToday=isToday;
+  const previousStats={...A.data.stats};
+  const previousWorkouts=[...A.data.month.workouts];
+  const previousRestDays=[...A.data.month.restDays];
+
+  // Immediate feedback: mark the button complete before the network round-trip.
+  // We deliberately avoid guessing the new streak here; the server returns the
+  // authoritative schedule-aware value shortly after the optimistic UI update.
   if(isToday){
-    const alreadyDone = A.data.month.workouts.some(x=>x.date===date);
-    if(alreadyDone){ A.busyWorkout=false; return; }
-    A.data.month.workouts.push({date,completed:true,workoutType:type||null,note:note||''});
+    A.data.month.workouts.push({date,completed:true,workoutType:type||null,note:note||'',optimistic:true});
     A.data.month.restDays=A.data.month.restDays.filter(x=>x.date!==date);
     A.data.stats={
       ...A.data.stats,
-      currentStreak: Math.max(1, Number(A.data.stats.currentStreak||0)+1),
-      longestStreak: Math.max(Number(A.data.stats.longestStreak||0), Number(A.data.stats.currentStreak||0)+1),
       totalWorkouts:Number(A.data.stats.totalWorkouts||0)+1,
       workoutsWeek:Number(A.data.stats.workoutsWeek||0)+1,
       workoutsMonth:Number(A.data.stats.workoutsMonth||0)+1
@@ -60,24 +57,31 @@ async function doWorkout(date=todayKey(),type=null,note=''){
   }
 
   try{
-    const r=await api('/api/workouts',{method:'POST',body:JSON.stringify({date,workoutType:type,note})});
+    const r=await api('/api/workouts',{
+      method:'POST',
+      body:JSON.stringify({date,workoutType:type,note})
+    });
+
     A.data.stats={...A.data.stats,...r.stats};
-    if(monthKey===currentMonth){
-      const exists=A.data.month.workouts.some(x=>x.date===date);
-      if(!exists)A.data.month.workouts.push(r.savedWorkout||{date,completed:true,workoutType:type||null,note:note||''});
+    if(date===A.data.today) A.pendingToday=false;
+    if(isToday){
+      const index=A.data.month.workouts.findIndex(x=>x.date===date);
+      if(index>=0) A.data.month.workouts[index]=r.savedWorkout||{date,completed:true,workoutType:type||null,note:note||''};
+      else A.data.month.workouts.push(r.savedWorkout||{date,completed:true,workoutType:type||null,note:note||''});
       A.data.month.restDays=A.data.month.restDays.filter(x=>x.date!==date);
     }
-    A.selected=null;
     A.busyWorkout=false;
-    A.modal=r.newAchievements?.length?{type:'achievement',achievement:r.newAchievements[0]}:{type:'success',streak:r.stats.currentStreak,message:r.motivation};
+    A.modal=r.newAchievements?.length
+      ?{type:'achievement',achievement:r.newAchievements[0]}
+      :{type:'success',streak:r.stats.currentStreak,message:r.motivation};
     render();
   }catch(e){
     A.busyWorkout=false;
     if(isToday){
-      // Roll back only the optimistic values if the save failed.
-      A.data.stats=optimisticBefore.stats;
-      A.data.month.workouts=A.data.month.workouts.filter(x=>x.date!==date);
-      if(optimisticBefore.workout)A.data.month.workouts.push(optimisticBefore.workout);
+      A.pendingToday=false;
+      A.data.stats=previousStats;
+      A.data.month.workouts=previousWorkouts;
+      A.data.month.restDays=previousRestDays;
       render();
     }
     toast(e.message,'error');
