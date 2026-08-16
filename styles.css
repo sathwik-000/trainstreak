@@ -6,3 +6,22 @@
 .modal-question{font-size:13px;font-weight:900;margin:5px 0 12px}.danger-text-btn{padding:10px 0}.about{margin-bottom:2px}.achievement-section h3,.achievements-section h3{margin:0 0 12px}.page>h3{margin:0}.modal-backdrop{animation:fadeIn .16s ease}.celebrate-modal{animation:popIn .22s ease}.toast{animation:toastIn .2s ease}.fatal .primary-btn{width:min(100%,220px);margin-top:8px}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes popIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(-4%)}}@keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
 
 .workout-cta:disabled{opacity:.78;cursor:default;transform:none;}
+
+/* Home polish */
+.hero-card-polished{min-height:205px;padding:22px;box-shadow:0 18px 45px rgba(0,0,0,.16)}
+.hero-copy{min-width:0}
+.streak-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.streak-badge{font-size:9px;letter-spacing:.12em;font-weight:950;padding:6px 8px;border-radius:999px;background:rgba(199,255,47,.1);color:var(--accent);border:1px solid rgba(199,255,47,.18)}
+.hero-dot{color:var(--line);padding:0 4px}
+.today-card-polished{padding:20px;box-shadow:0 18px 45px rgba(0,0,0,.14)}
+.today-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.today-chip{flex:none;font-size:9px;letter-spacing:.12em;font-weight:950;padding:7px 9px;border-radius:999px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+.today-chip.done{background:rgba(56,214,122,.1);border-color:rgba(56,214,122,.2);color:#7de5a8}
+.workout-cta{display:flex;align-items:center;justify-content:center;gap:10px;min-height:58px;position:relative;overflow:hidden}
+.workout-cta:not(.complete):not(:disabled):hover{filter:brightness(1.03);transform:translateY(-1px)}
+.workout-cta:not(.complete):not(:disabled){animation:ctaGlow 2.4s ease-in-out infinite}
+.cta-icon{font-size:18px;line-height:1}.cta-arrow{position:absolute;right:18px;font-size:18px;opacity:.8}.cta-helper{margin:10px 2px 0;text-align:center;font-size:10px;color:var(--muted)}
+.progress-card-polished{box-shadow:0 12px 30px rgba(0,0,0,.1)}
+.hero-card-polished .ring{box-shadow:0 0 0 1px rgba(199,255,47,.08),0 14px 32px rgba(0,0,0,.18)}
+@keyframes ctaGlow{0%,100%{box-shadow:0 12px 30px rgba(199,255,47,.12)}50%{box-shadow:0 14px 34px rgba(199,255,47,.2)}}
+@media(max-width:480px){.hero-card-polished{min-height:190px}.streak-value{font-size:48px}.today-header{flex-direction:column;gap:8px}.today-chip{align-self:flex-start}.cta-arrow{display:none}}
